@@ -13,7 +13,7 @@ export function PromptArea({ prompt, setPrompt, onCompare, loading, selectedCoun
         onKeyDown={e => { if (e.key === 'Enter' && e.metaKey) onCompare(); }}
       />
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-800">
-        <span className="text-sm text-gray-500">{selectedCount}/4 models selected • ⌘+Enter to compare</span>
+        <span className="text-sm text-gray-500">{selectedCount}/10 models selected • ⌘+Enter to compare</span>
         <button
           onClick={onCompare}
           disabled={loading || !prompt.trim() || selectedCount === 0}

@@ -146,7 +146,7 @@ function App() {
     }
     setSelectedModels(prev => {
       if (prev.includes(modelId)) return prev.filter(m => m !== modelId);
-      if (prev.length >= 4) return prev;
+      if (prev.length >= 10) return prev;
       return [...prev, modelId];
     });
   };

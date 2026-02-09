@@ -3,10 +3,10 @@ import { Zap, Plus, Sparkles, LogOut } from 'lucide-react';
 export function Header({ credits, email, onAddCredits, onLogout }: { credits: number; email: string; onAddCredits: () => void; onLogout: () => void }) {
   return (
     <header className="border-b border-gray-800 bg-gray-950/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 h-12 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-6 h-6 text-brand-400" />
-          <span className="text-xl font-bold bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent">PromptShot</span>
+          <Sparkles className="w-4 h-4 text-brand-400" />
+          <span className="text-base font-bold bg-gradient-to-r from-brand-400 to-purple-400 bg-clip-text text-transparent hidden sm:inline">PromptShot</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-400 hidden sm:block">{email}</span>
