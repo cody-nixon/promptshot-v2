@@ -1,0 +1,110 @@
+# Tests
+
+## Test 1 - Auth modal shows on first visit [sanity]
+Viewport: desktop
+Description: Verifies the auth modal appears when no session exists.
+
+Steps:
+1. Clear localStorage
+2. Navigate to the app
+
+Expected: A modal appears with "PromptShot" logo, "Sign Up" and "Log In" tabs, email and password fields, and a "Create Account" button.
+
+## Test 2 - Sign up creates account
+Viewport: desktop
+Description: Verifies signing up with email and password works.
+
+Steps:
+1. Clear localStorage
+2. Navigate to the app
+3. Enter email "testuser@example.com" and password "password123" in signup form
+4. Enter same password in confirm field
+5. Click "Create Account"
+
+Expected: Modal closes. Header shows email "testuser@example.com", credit balance $0.00, and a logout button.
+
+## Test 3 - Duplicate email shows error
+Viewport: desktop
+Description: Verifies signing up with an existing email shows error.
+
+Steps:
+1. Sign up with an email that already exists
+2. Fill in password fields and click "Create Account"
+
+Expected: Error message "Email already registered" appears in the modal.
+
+## Test 4 - Login with correct credentials
+Viewport: desktop
+Description: Verifies logging in with valid credentials.
+
+Steps:
+1. Clear localStorage
+2. Navigate to the app
+3. Switch to "Log In" tab
+4. Enter existing email and password
+5. Click "Log In"
+
+Expected: Modal closes. Header shows email and credit balance.
+
+## Test 5 - Login with wrong password shows error
+Viewport: desktop
+Description: Verifies wrong password shows error.
+
+Steps:
+1. Switch to "Log In" tab
+2. Enter valid email with wrong password
+3. Click "Log In"
+
+Expected: Error message "Invalid email or password" appears.
+
+## Test 6 - Logout returns to auth modal
+Viewport: desktop
+Description: Verifies logout clears session and shows auth modal.
+
+Steps:
+1. Log in successfully
+2. Click the logout button in the header
+
+Expected: Auth modal reappears. localStorage ps_user_id and ps_auth_token are cleared.
+
+## Test 7 - Session persists on refresh
+Viewport: desktop
+Description: Verifies refreshing the page keeps user logged in.
+
+Steps:
+1. Log in successfully
+2. Refresh the page
+
+Expected: User remains logged in. Header shows email and credit balance without auth modal.
+
+## Test 8 - Free model comparison works with auth
+Viewport: desktop
+Description: Verifies comparing free models works when authenticated.
+
+Steps:
+1. Log in
+2. Search and select two free models
+3. Type "What is 2+2?" in prompt
+4. Click "Compare"
+
+Expected: Two response cards appear with model responses, time, and tokens.
+
+## Test 9 - Credit purchase flow
+Viewport: desktop
+Description: Verifies credit purchase dialog works.
+
+Steps:
+1. Log in
+2. Click "Add Credits" in header
+
+Expected: Dialog shows three options: $5, $10, $20.
+
+## Test 10 - Invalid token shows auth modal
+Viewport: desktop
+Description: Verifies expired/invalid token redirects to login.
+
+Steps:
+1. Manually set invalid ps_auth_token in localStorage
+2. Navigate to the app
+
+Expected: Auth modal appears (invalid token detected).
