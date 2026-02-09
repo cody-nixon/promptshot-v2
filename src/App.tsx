@@ -14,6 +14,7 @@ function App() {
   const [authToken, setAuthToken] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [credits, setCredits] = useState(0);
+  const [usage, setUsage] = useState<{ totalTokens: number; totalCost: number; totalQueries: number }>({ totalTokens: 0, totalCost: 0, totalQueries: 0 });
   const [modelGroups, setModelGroups] = useState<ModelGroup[]>([]);
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [prompt, setPrompt] = useState('');
@@ -50,6 +51,7 @@ function App() {
     api.get('/api/auth/me').then(res => {
       setCredits(res.data.credits || 0);
       setEmail(res.data.email || '');
+      setUsage({ totalTokens: res.data.totalTokens || 0, totalCost: res.data.totalCost || 0, totalQueries: res.data.totalQueries || 0 });
       localStorage.setItem('ps_email', res.data.email || '');
     }).catch(() => {
       localStorage.removeItem('ps_user_id');
@@ -175,7 +177,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-950">
-      <Header credits={credits} email={email} onAddCredits={() => setShowCredits(true)} onLogout={handleLogout} />
+      <Header credits={credits} email={email} usage={usage} onAddCredits={() => setShowCredits(true)} onLogout={handleLogout} />
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         <PromptArea prompt={prompt} setPrompt={setPrompt} onCompare={compare} loading={loading} selectedCount={selectedModels.length} />
         <ModelPicker groups={modelGroups} selected={selectedModels} onToggle={toggleModel} loading={modelsLoading} credits={credits} />

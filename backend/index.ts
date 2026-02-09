@@ -437,7 +437,19 @@ export const handler = router({
         const auth = await authenticateRequest(event);
         if (!auth) return error('Unauthorized', 401);
         const u = auth.user as any;
-        return json({ userId: auth.userId, email: u.email, credits: u.credits || 0 });
+        return json({ userId: auth.userId, email: u.email, credits: u.credits || 0, totalTokens: u.totalTokens || 0, totalCost: u.totalCost || 0, totalQueries: u.totalQueries || 0 });
+    },
+
+    'GET /api/usage': async ({ event }) => {
+        const auth = await authenticateRequest(event);
+        if (!auth) return error('Unauthorized', 401);
+        const u = auth.user as any;
+        const { items } = await db.list('usage_logs', { filter: { userId: auth.userId }, limit: 50 });
+        const sorted = items.sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
+        return json({
+            summary: { totalTokens: u.totalTokens || 0, totalCost: u.totalCost || 0, totalQueries: u.totalQueries || 0 },
+            recent: sorted.slice(0, 20).map((l: any) => ({ tokens: l.tokens, cost: l.cost, models: l.models, timestamp: l.timestamp }))
+        });
     },
 
     'GET /api/user/:id': async ({ params, event }) => {
@@ -546,7 +558,30 @@ export const handler = router({
             }
         }
 
-        return json({ results });
+        // Log usage per model
+        const totalTokens = results.reduce((sum: number, r: any) => sum + (r.tokens || 0), 0);
+        if (totalTokens > 0) {
+            await db.add('usage_logs', [{
+                userId,
+                tokens: totalTokens,
+                cost: actualTotalCost,
+                models: models.length,
+                timestamp: Date.now()
+            }]);
+            // Update cumulative stats on user record
+            const [latestUser] = await db.get('users', [userId]);
+            if (latestUser) {
+                const lu = latestUser as any;
+                await db.update('users', [{ id: userId, record: {
+                    ...lu,
+                    totalTokens: (lu.totalTokens || 0) + totalTokens,
+                    totalCost: (lu.totalCost || 0) + actualTotalCost,
+                    totalQueries: (lu.totalQueries || 0) + 1
+                }}]);
+            }
+        }
+
+        return json({ results, usage: { tokens: totalTokens, cost: actualTotalCost } });
     },
 
     'POST /api/checkout': async ({ body, event }) => {
